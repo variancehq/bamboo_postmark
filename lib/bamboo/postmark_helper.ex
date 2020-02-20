@@ -38,6 +38,25 @@ defmodule Bamboo.PostmarkHelper do
   end
 
   @doc """
+  Send emails using Postmark's template API.
+
+  Setup Postmark to send emails using a template. Use this in conjuction with
+  the template content to offload template rendering to Postmark. The
+  template id specified here must match the template id in Postmark.
+  Postmarks's API docs for this can be found [here](https://postmarkapp.com/developer/api/templates-api#email-with-template).
+
+  ## Example
+
+      template_alias(email, "my-alias")
+      template_alias(email, "my-alias", %{"name" => "Name", "content" => "John"})
+  """
+  def template_alias(email, template_alias, template_model \\ %{}) do
+    email
+    |> Email.put_private(:template_alias, template_alias)
+    |> Email.put_private(:template_model, template_model)
+  end
+
+  @doc """
   Put extra message parameters that are used by Postmark. You can set things
   like TrackOpens, TrackLinks or Attachments.
 
@@ -56,6 +75,7 @@ defmodule Bamboo.PostmarkHelper do
   def put_param(%Email{private: %{message_params: _}} = email, key, value) do
     put_in(email.private[:message_params][key], value)
   end
+
   def put_param(email, key, value) do
     email
     |> Email.put_private(:message_params, %{})
