@@ -23,36 +23,21 @@ defmodule Bamboo.PostmarkHelper do
 
   Setup Postmark to send emails using a template. Use this in conjuction with
   the template content to offload template rendering to Postmark. The
-  template id specified here must match the template id in Postmark.
+  template id specified here must match the template id or alias in Postmark.
   Postmarks's API docs for this can be found [here](https://postmarkapp.com/developer/api/templates-api#email-with-template).
+
+  When using integers, we'll treat these as Template IDs otherwise they will be considered
+  template aliases.
 
   ## Example
 
-      template(email, "9746128")
-      template(email, "9746128", %{"name" => "Name", "content" => "John"})
+      template(email, 9746128)
+      template(email, 9746128, %{"name" => "Name", "content" => "John"})
+      template(email, "example-alias")
   """
-  def template(email, template_id, template_model \\ %{}) do
+  def template(email, template_id_or_alias, template_model \\ %{}) do
     email
-    |> Email.put_private(:template_id, template_id)
-    |> Email.put_private(:template_model, template_model)
-  end
-
-  @doc """
-  Send emails using Postmark's template API.
-
-  Setup Postmark to send emails using a template. Use this in conjuction with
-  the template content to offload template rendering to Postmark. The
-  template id specified here must match the template id in Postmark.
-  Postmarks's API docs for this can be found [here](https://postmarkapp.com/developer/api/templates-api#email-with-template).
-
-  ## Example
-
-      template_alias(email, "my-alias")
-      template_alias(email, "my-alias", %{"name" => "Name", "content" => "John"})
-  """
-  def template_alias(email, template_alias, template_model \\ %{}) do
-    email
-    |> Email.put_private(:template_alias, template_alias)
+    |> Email.put_private(:template_id_or_alias, template_id_or_alias)
     |> Email.put_private(:template_model, template_model)
   end
 

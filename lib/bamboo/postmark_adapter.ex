@@ -88,6 +88,8 @@ defmodule Bamboo.PostmarkAdapter do
     end
   end
 
+  def supports_attachments?, do: false
+
   def json_library do
     Bamboo.json_library()
   end
@@ -108,34 +110,29 @@ defmodule Bamboo.PostmarkAdapter do
   end
 
   defp maybe_put_template_params(params, %{
-         private: %{template_id: template_name, template_model: template_model}
-       }) do
+         private: %{template_id_or_alias: template_id_or_alias, template_model: template_model}
+       })
+       when is_integer(template_id_or_alias) do
     params
-    |> Map.put(:TemplateId, template_name)
+    |> Map.put(:TemplateId, template_id_or_alias)
     |> Map.put(:TemplateModel, template_model)
     |> Map.put(:InlineCss, true)
   end
 
   defp maybe_put_template_params(params, %{
-         private: %{template_alias: template_name, template_model: template_model}
-       }) do
+         private: %{template_id_or_alias: template_id_or_alias, template_model: template_model}
+       })
+       when is_binary(template_id_or_alias) do
     params
-    |> Map.put(:TemplateAlias, template_name)
+    |> Map.put(:TemplateAlias, template_id_or_alias)
     |> Map.put(:TemplateModel, template_model)
     |> Map.put(:InlineCss, true)
   end
 
-  defp maybe_put_template_params(params, _) do
-    params
-  end
+  defp maybe_put_template_params(params, _), do: params
 
-  defp maybe_put_tag_params(params, %{private: %{tag: tag}}) do
-    Map.put(params, :Tag, tag)
-  end
-
-  defp maybe_put_tag_params(params, _) do
-    params
-  end
+  defp maybe_put_tag_params(params, %{private: %{tag: tag}}), do: Map.put(params, :Tag, tag)
+  defp maybe_put_tag_params(params, _), do: params
 
   defp email_params(email) do
     recipients = recipients(email)
@@ -216,7 +213,7 @@ defmodule Bamboo.PostmarkAdapter do
     ]
   end
 
-  defp api_path(%{private: %{template_id: _}}), do: @send_email_template_path
+  defp api_path(%{private: %{template_id_or_alias: _}}), do: @send_email_template_path
   defp api_path(_), do: @send_email_path
 
   defp base_uri do
