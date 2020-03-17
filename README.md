@@ -1,8 +1,6 @@
 # Bamboo.PostmarkAdapter
 
-[![CircleCI](https://circleci.com/gh/pablo-co/bamboo_postmark.svg?style=svg)](https://circleci.com/gh/pablo-co/bamboo_postmark)
-
-A [Postmark](https://postmarkapp.com/) Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email library.
+A [Postmark](https://postmarkapp.com/) Adapter for the [Bamboo](https://github.com/thoughtbot/bamboo) email library. Forked to include an alias feature
 
 ## Installation
 
@@ -12,10 +10,7 @@ The package can be installed as:
 
 ```elixir
 def deps do
-  # Get from hex
-  [{:bamboo_postmark, "~> 0.6"}]
-  # Or use the latest from master
-  [{:bamboo_postmark, github: "pablo-co/bamboo_postmark"}]
+  [{:bamboo_postmark, github: "variancehq/bamboo_postmark"}]
 end
 ```
 
@@ -58,7 +53,7 @@ defmodule MyApp.Mail do
 
   def some_email do
     email
-    |> template("id_of_template",
+    |> template("id_or_alias_of_template",
                 %{name: "John Doe", confirm_link: "http://www.link.com"})
   end
 end
@@ -70,7 +65,7 @@ Postmark templates include a subject, HTML body and text body and thus these sho
 
 ```elixir
 email
-|> template("id", %{value: "Some value"})
+|> template("id_or_alias", %{value: "Some value"})
 |> subject("Will raise exception")
 |> html_body("<p>Will raise exception</p>")
 |> text_body("Will raise exception")
